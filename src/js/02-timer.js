@@ -1,7 +1,7 @@
 const flatpickr = require('flatpickr').default;
 import 'flatpickr/dist/flatpickr.min.css';
 
-console.log(typeof flatpickr);
+// console.log(typeof flatpickr);
 
 // =======DOM=============
 
@@ -15,12 +15,12 @@ const refs = {
 };
 
 function showsRefs() {
-  console.log(refs.input);
-  console.log(refs.startBtn);
-  console.log(refs.days.value);
-  console.log(refs.hours);
-  console.log(refs.minutes);
-  console.log(refs.seconds);
+  // console.log(refs.input);
+  // console.log(refs.startBtn);
+  // console.log(refs.days.value);
+  // console.log(refs.hours);
+  // console.log(refs.minutes);
+  // console.log(refs.seconds);
 }
 showsRefs();
 
@@ -46,40 +46,47 @@ function convertMs(ms) {
 }
 
 //==========CREATE NEW INSTANCE===========
+// let ms = null;
+// console.log(ms);
+// let selData = null;
+// console.log(selData);
 
 const options = {
-  enableTime: true,
+  enableTime: false,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    if (this.enableTime) {
+      return;
+    }
+
+    const countdownTimerDataTraget = selectedDates[0];
+    this.enableTime = true;
+
+    setInterval(() => {
+      // console.log(selectedDates[0].getTime());
+
+      const countdownTimerDataStart = new Date();
+      console.log(countdownTimerDataStart.getTime());
+      // console.log(countdownTimerDataTraget);
+      if (countdownTimerDataTraget < countdownTimerDataStart) {
+        alert('Please choose a date in the future');
+      } else {
+        const ms = countdownTimerDataTraget - countdownTimerDataStart;
+        const getConvertMs = convertMs(ms);
+        showConvertMsData(getConvertMs);
+        refs.startBtn.disabled = false;
+      }
+    }, 1000);
   },
+  // onselectstart() {
+  //   this.enableTime = true;
+  // },
 };
 
-let ms = null;
-
-const ff = flatpickr('#datetime-picker', {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose(selectedDates) {},
-});
-
-const onClose = selectedDates => {
-  // console.log(selectedDates[0].getTime());
-  if (selectedDates[0] < new Date()) {
-    alert('Please choose a date in the future');
-    refs.startBtn.setAttribute('disabled');
-    return;
-  }
-  ms = selectedDates[0] - new Date();
-  const getConvertMs = convertMs(ms);
-  showConvertMsData(getConvertMs);
-};
-// console.log(flatpickr.config.onClose());
-// console.log(typeof gg);
+//====
+flatpickr('#datetime-picker', options);
 
 const showConvertMsData = getConvertMs => {
   refs.days.textContent = getConvertMs.days;
@@ -88,14 +95,12 @@ const showConvertMsData = getConvertMs => {
   refs.seconds.textContent = getConvertMs.seconds;
 };
 
-console.log(ms);
+//====
+// console.log(timer.config);
 
 const handleStartBtnClick = () => {
-  console.log('Hello');
-  setInterval(() => {
-    onClose(ff.selectedDates);
-  }, 1000);
+  // options.onselectstart();
 };
 
 refs.startBtn.addEventListener('click', handleStartBtnClick);
-// console.log(typeof handleStartBtnClick);
+console.log(typeof handleStartBtnClick);
