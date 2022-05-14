@@ -11,6 +11,8 @@ const refs = {
 };
 
 let selectedDates = null;
+let intervalId = null;
+console.log(intervalId);
 
 const options = {
   enableTime: true,
@@ -19,26 +21,45 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     selectedDates = selectedDates[0].getTime();
-    setInterval(() => {
-      getTimeResult(selectedDates);
-    }, 1000);
+    if (selectedDates > options.defaultDate) {
+      getSelectedDate(selectedDates);
+      refs.startBtn.removeAttribute('disabled', '');
+    } else {
+      alert('Please choose a date in the future');
+    }
   },
 };
 
 flatpickr('#datetime-picker', options);
 
-const showConvertMsData = ({ days, hours, minutes, seconds } = getConvertsMs) => {
-  refs.days.textContent = days;
-  refs.hours.textContent = hours;
-  refs.minutes.textContent = minutes;
-  refs.seconds.textContent = seconds;
+const showConvertMsData = ({ days, hours, minutes, seconds }) => {
+  refs.days.textContent = addLeadingZero(days);
+  refs.hours.textContent = addLeadingZero(hours);
+  refs.minutes.textContent = addLeadingZero(minutes);
+  refs.seconds.textContent = addLeadingZero(seconds);
 };
 
-const getTimeResult = data => {
-  selectedDates = data;
-  const resultTime = data - new Date();
-  const getConvertsMs = convertMs(resultTime);
-  showConvertMsData(getConvertsMs);
+refs.startBtn.setAttribute('disabled', '');
+
+const getSelectedDate = date => {
+  selectedDates = date;
+};
+const startTimer = () => {
+  console.log(selectedDates);
+  const resultTime = selectedDates - new Date();
+
+  if (resultTime < 0) {
+    clearInterval(intervalId);
+  } else {
+    const getConvertsMs = convertMs(resultTime);
+    console.log(intervalId);
+
+    showConvertMsData(getConvertsMs);
+  }
+};
+
+const addLeadingZero = value => {
+  return String(value).padStart(2, '0');
 };
 
 function convertMs(ms) {
@@ -60,4 +81,14 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// refs.startBtn.addEventListener('click');
+// const startTimer = date => {
+//   //   getTimeResult(date);
+// };
+refs.startBtn.addEventListener('click', () => {
+  intervalId = setInterval(() => {
+    startTimer();
+    refs.startBtn.setAttribute('disabled', '');
+  }, 1000);
+});
+
+console.log(intervalId);
