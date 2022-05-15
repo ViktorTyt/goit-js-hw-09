@@ -26,6 +26,7 @@
     "sass": "^1.32.8"
   },
   "dependencies": {
+    "dist": "^0.1.2",
     "flatpickr": "^4.6.13"
   }
 }

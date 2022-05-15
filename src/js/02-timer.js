@@ -10,9 +10,10 @@ const refs = {
   seconds: document.querySelector('[data-seconds]'),
 };
 
+refs.startBtn.setAttribute('disabled', '');
+
 let selectedDates = null;
 let intervalId = null;
-console.log(intervalId);
 
 const options = {
   enableTime: true,
@@ -32,6 +33,10 @@ const options = {
 
 flatpickr('#datetime-picker', options);
 
+const getSelectedDate = date => {
+  selectedDates = date;
+};
+
 const showConvertMsData = ({ days, hours, minutes, seconds }) => {
   refs.days.textContent = addLeadingZero(days);
   refs.hours.textContent = addLeadingZero(hours);
@@ -39,20 +44,13 @@ const showConvertMsData = ({ days, hours, minutes, seconds }) => {
   refs.seconds.textContent = addLeadingZero(seconds);
 };
 
-refs.startBtn.setAttribute('disabled', '');
-
-const getSelectedDate = date => {
-  selectedDates = date;
-};
 const startTimer = () => {
-  console.log(selectedDates);
   const resultTime = selectedDates - new Date();
 
   if (resultTime < 0) {
     clearInterval(intervalId);
   } else {
     const getConvertsMs = convertMs(resultTime);
-    console.log(intervalId);
 
     showConvertMsData(getConvertsMs);
   }
@@ -81,14 +79,9 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// const startTimer = date => {
-//   //   getTimeResult(date);
-// };
 refs.startBtn.addEventListener('click', () => {
   intervalId = setInterval(() => {
     startTimer();
     refs.startBtn.setAttribute('disabled', '');
   }, 1000);
 });
-
-console.log(intervalId);
