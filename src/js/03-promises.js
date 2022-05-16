@@ -8,21 +8,18 @@ const refs = {
 
 let intervalId = null;
 
-const createPromise = (position, delay, delayA) => {
+const createPromise = (position, delay, delayByStep) => {
   const shouldResolve = Math.random() > 0.3;
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (shouldResolve) {
         // Fulfill
-        resolve({ position, delayA });
-        // (console.log(`${position} -'ok'`));
+        resolve({ position, delayByStep });
       } else {
-        reject({ position, delayA });
-        // (console.log(`${position} -'err'`));
+        reject({ position, delayByStep });
       }
     }, delay);
   });
-  // console.log({ promise });
 };
 
 const onCreatePromise = event => {
@@ -34,20 +31,19 @@ const onCreatePromise = event => {
   const amount = formData.amount.value;
 
   let counter = 0;
-  let delayA = 0;
+  let delayByStep = 0;
+
   intervalId = setInterval(() => {
-    // console.log(intervalId);
     counter += 1;
-    delayA = Number(delay) + Number(step) * counter - Number(step);
-    // console.log(delayA);
+    delayByStep = Number(delay) + Number(step) * counter - Number(step);
+
     if (counter <= amount) {
-      createPromise(counter, delay, delayA)
-        .then(({ position, delayA }) => {
-          // console.log(position);
-          console.log(`✅ Fulfilled promise ${position} in ${delayA}ms`);
+      createPromise(counter, delay, delayByStep)
+        .then(({ position, delayByStep }) => {
+          console.log(`✅ Fulfilled promise ${position} in ${delayByStep}ms`);
         })
-        .catch(({ position, delayA }) => {
-          console.log(`❌ Rejected promise ${position} in ${delayA}ms`);
+        .catch(({ position, delayByStep }) => {
+          console.log(`❌ Rejected promise ${position} in ${delayByStep}ms`);
         });
     } else {
       clearInterval(intervalId);
